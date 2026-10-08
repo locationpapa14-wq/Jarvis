@@ -28,33 +28,38 @@ jobs:
         id: locate
         shell: bash
         run: |
-          echo "Searching for Gradle wrapper..."
-          find . -type f -name gradlew -print
-          WRAPPER="$(find . -type f -name gradlew -print -quit)"
+          WRAPPER="$(find . -type f -name gradlew -not -path './.git/*' -print -quit)"
 
           if [ -z "$WRAPPER" ]; then
-            echo "ERROR: gradlew was not found."
-            echo "Repository files:"
+            echo "ERROR: gradlew not found"
             find . -maxdepth 4 -type f | head -200
             exit 1
           fi
 
           PROJECT_DIR="$(dirname "$WRAPPER")"
           echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
-          echo "Found wrapper: $WRAPPER"
+          echo "Found: $WRAPPER"
+
+      - name: Fix Gradle Wrapper
+        working-directory: ${{ steps.locate.outputs.project_dir }}
+        shell: bash
+        run: |
+          sed -i 's/\r$//' gradlew
+          head -n 1 gradlew
+          chmod +x gradlew
+          ls -l gradlew
+          command -v bash
 
       - name: Build APK
         working-directory: ${{ steps.locate.outputs.project_dir }}
+        shell: bash
         run: |
-          chmod +x ./gradlew
-          java -version
-          ./gradlew assembleDebug --stacktrace
+          bash ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: JARVIS-APK
-          path: |
-            **/build/outputs/apk/**/*.apk
+          path: '**/build/outputs/apk/**/*.apk'
           if-no-files-found: warn
