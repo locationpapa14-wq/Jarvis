@@ -1,0 +1,3 @@
+-keep class com.jarvis.assistant.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*

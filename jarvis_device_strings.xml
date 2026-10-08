@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">JARVIS uses this service only to tap, scroll, type and read visible on-screen text when you ask it to by voice. You can turn it off at any time.</string>
+</resources>
