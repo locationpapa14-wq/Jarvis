@@ -45,10 +45,46 @@ jobs:
         shell: bash
         run: |
           sed -i 's/\r$//' gradlew
-          head -n 1 gradlew
           chmod +x gradlew
           ls -l gradlew
-          command -v bash
+
+      - name: Prepare Android source files
+        working-directory: ${{ steps.locate.outputs.project_dir }}
+        shell: bash
+        run: |
+          set -e
+
+          mkdir -p src/main/java/com/jarvis/assistant
+          mkdir -p src/main/res/layout
+          mkdir -p src/main/res/drawable
+          mkdir -p src/main/res/values
+          mkdir -p src/main/res/xml
+          mkdir -p src/main/assets
+
+          cp AndroidManifest.xml src/main/AndroidManifest.xml
+
+          cp ./*.kt src/main/java/com/jarvis/assistant/
+
+          cp activity_main.xml src/main/res/layout/
+          cp activity_settings.xml src/main/res/layout/
+          cp item_chat_turn.xml src/main/res/layout/
+          cp sheet_chat_history.xml src/main/res/layout/
+
+          cp bg_*.xml src/main/res/drawable/
+          cp ic_*.xml src/main/res/drawable/
+          cp pill_jarvis_title.xml src/main/res/drawable/
+
+          cp colors.xml src/main/res/values/
+          cp strings.xml src/main/res/values/
+          cp themes.xml src/main/res/values/
+          cp jarvis_device_strings.xml src/main/res/values/
+
+          cp jarvis_accessibility_service.xml src/main/res/xml/
+          cp network_security_config.xml src/main/res/xml/
+
+          cp index.html src/main/assets/
+
+          echo "Android source files prepared successfully."
 
       - name: Build APK
         working-directory: ${{ steps.locate.outputs.project_dir }}
