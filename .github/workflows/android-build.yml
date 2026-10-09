@@ -32,7 +32,6 @@ jobs:
 
           if [ -z "$WRAPPER" ]; then
             echo "ERROR: gradlew not found"
-            find . -maxdepth 4 -type f | head -200
             exit 1
           fi
 
@@ -46,7 +45,6 @@ jobs:
         run: |
           sed -i 's/\r$//' gradlew
           chmod +x gradlew
-          ls -l gradlew
 
       - name: Prepare Android source files
         working-directory: ${{ steps.locate.outputs.project_dir }}
@@ -84,7 +82,15 @@ jobs:
 
           cp index.html src/main/assets/
 
-          echo "Android source files prepared successfully."
+          cat > src/main/res/drawable/bg_power_button.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <shape xmlns:android="http://schemas.android.com/apk/res/android"
+              android:shape="oval">
+              <solid android:color="#FF3B82F6" />
+          </shape>
+          EOF
+
+          echo "Android source files prepared."
 
       - name: Build APK
         working-directory: ${{ steps.locate.outputs.project_dir }}
